@@ -3,7 +3,6 @@ import { runInAction } from '../action'
 import { ObservableValue } from '../observable_value'
 import { computed } from '../computed'
 import { observable } from '../observable_object'
-import { Simulate } from 'react-dom/test-utils'
 
 describe('Computed', () => {
   it('is observed', () => {

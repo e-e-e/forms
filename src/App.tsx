@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { observer, Observer } from './observables/observer_component'
-import { action, runInAction } from './observables/action'
+import { action } from './observables/action'
 import { observable } from './observables/observable_object'
 import { Form } from './Form/FormComponent'
 import { FormSchema } from './Form/form'

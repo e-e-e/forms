@@ -43,6 +43,7 @@
   "devDependencies": {
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-unused-imports": "^1.0.1",
     "prettier": "^2.2.1"
   }
 }
