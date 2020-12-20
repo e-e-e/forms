@@ -1,6 +1,5 @@
-
 export function isPropertyKey(val: any): val is PropertyKey {
-  return typeof val === "string" || typeof val === "number" || typeof val === "symbol"
+  return typeof val === 'string' || typeof val === 'number' || typeof val === 'symbol'
 }
 
 export function isString(v: any): v is string {
@@ -12,7 +11,7 @@ export function isNumber(v: any): v is number {
 }
 
 export function isObject(value: any): value is Object {
-  return value !== null && typeof value === "object"
+  return value !== null && typeof value === 'object'
 }
 
 export function isPlainObject(value: any): value is Object {
@@ -22,9 +21,8 @@ export function isPlainObject(value: any): value is Object {
   return proto.constructor?.toString() === Object.toString()
 }
 
-
 export function stringifyKey(key: any): string {
-  if (typeof key === "string") return key
-  if (typeof key === "symbol") return key.toString()
+  if (typeof key === 'string') return key
+  if (typeof key === 'symbol') return key.toString()
   return new String(key).toString()
 }

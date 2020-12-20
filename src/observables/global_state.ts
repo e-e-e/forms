@@ -1,9 +1,9 @@
-import {DerivationState} from "./derivation";
-import {ObservableAtom} from "./observable_atom";
+import { DerivationState } from './derivation'
+import { ObservableAtom } from './observable_atom'
 
 export const MANAGER = Symbol('adm')
 
-let objectCounter = 0;
+let objectCounter = 0
 
 export function nextId() {
   return objectCounter++
@@ -15,9 +15,9 @@ type Reaction = {
 export function reportObserved(observable: ObservableAtom) {
   if (globalState.currentDerivation.length < 1) {
     // console.warn('Accessing observable outside of observable context')
-    return;
+    return
   }
-  const derivation = globalState.currentDerivation[globalState.currentDerivation.length - 1];
+  const derivation = globalState.currentDerivation[globalState.currentDerivation.length - 1]
   derivation.observables.push(observable)
   // console.log('d---', derivation.observables)
 }
@@ -50,11 +50,11 @@ export function runReactions() {
     iterations++
     if (iterations > MAX_ITERATIONS) {
       console.error('REACTIONS DANGEROUSLY LOOPING')
-      reactions.splice(0);
+      reactions.splice(0)
     }
-    const remaining = reactions.splice(0);
+    const remaining = reactions.splice(0)
     for (const reaction of remaining) {
-      reaction.runReaction();
+      reaction.runReaction()
     }
   }
 }

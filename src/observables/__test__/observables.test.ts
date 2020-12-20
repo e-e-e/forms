@@ -1,17 +1,17 @@
-import {observer} from "../observer";
-import {ObservableValue} from "../observable_value";
-import {runInAction} from "../action";
-import {observable} from "../observable_object";
-import {computed} from "../computed";
-import {createObservableArray} from "../observable_array";
+import { observer } from '../observer'
+import { ObservableValue } from '../observable_value'
+import { runInAction } from '../action'
+import { observable } from '../observable_object'
+import { computed } from '../computed'
+import { createObservableArray } from '../observable_array'
 
 describe('observer', () => {
   it('does not rerun when value is changed outside an action', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const item = new ObservableValue('a')
     observer(() => {
-      spy(item.get());
-    });
+      spy(item.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('a')
     item.set('b')
@@ -20,11 +20,11 @@ describe('observer', () => {
   })
 
   it('does not rerun when value the same', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const item = new ObservableValue('a')
     observer(() => {
-      spy(item.get());
-    });
+      spy(item.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('a')
     runInAction(() => item.set('a'))
@@ -34,11 +34,11 @@ describe('observer', () => {
 
   // TODO: MAKE THIS WORK
   it.skip('does not rerun when value the same after an action', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const item = new ObservableValue('a')
     observer(() => {
-      spy(item.get());
-    });
+      spy(item.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('a')
     runInAction(() => {
@@ -50,11 +50,11 @@ describe('observer', () => {
   })
 
   it('reruns when single value is changed within an action.', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const item = new ObservableValue('a')
     observer(() => {
-      spy(item.get());
-    });
+      spy(item.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('a')
     runInAction(() => item.set('b'))
@@ -63,13 +63,12 @@ describe('observer', () => {
   })
 
   it('reruns only once when two values are updated within a singular action', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const itemA = new ObservableValue('a')
     const itemB = new ObservableValue(1)
     observer(() => {
-      spy(itemA.get(), itemB.get());
-
-    });
+      spy(itemA.get(), itemB.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('a', 1)
     runInAction(() => {
@@ -81,17 +80,16 @@ describe('observer', () => {
   })
 
   it('subscribes to observables in subsequent reruns', () => {
-    const spy = jest.fn();
+    const spy = jest.fn()
     const itemA = new ObservableValue('first')
     const itemB = new ObservableValue('not observed to start')
     observer(() => {
       if (itemA.get() === 'second') {
-        spy(itemA.get(), itemB.get());
+        spy(itemA.get(), itemB.get())
         return
       }
-      spy(itemA.get());
-
-    });
+      spy(itemA.get())
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('first')
     runInAction(() => itemB.set('unnoticed'))
@@ -107,28 +105,28 @@ describe('observer', () => {
 
 describe('Observable Object', () => {
   it('reruns when an observable is changed within an action.', () => {
-    const spy = jest.fn();
-    const item = observable({foo: 'bar'})
+    const spy = jest.fn()
+    const item = observable({ foo: 'bar' })
     observer(() => {
-      spy(item.foo);
-    });
+      spy(item.foo)
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('bar')
-    runInAction(() => item.foo = 'foo')
+    runInAction(() => (item.foo = 'foo'))
     expect(spy).toBeCalledTimes(2)
     expect(spy).toHaveBeenLastCalledWith('foo')
   })
 
   it('reruns when a value that was added to an observable is changed within an action.', () => {
-    const spy = jest.fn();
-    const item = observable<Record<string, any>>({foo: 'bar'})
+    const spy = jest.fn()
+    const item = observable<Record<string, any>>({ foo: 'bar' })
     item.bar = 'ok'
     observer(() => {
-      spy(item.bar);
-    });
+      spy(item.bar)
+    })
     expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('ok')
-    runInAction(() => item.bar = 'foo')
+    runInAction(() => (item.bar = 'foo'))
     expect(spy).toBeCalledTimes(2)
     expect(spy).toHaveBeenLastCalledWith('foo')
   })
@@ -148,14 +146,14 @@ describe('Observable Object', () => {
 
 describe('Observable Array', () => {
   it('reruns when an observable is changed within an action.', () => {
-    const spy = jest.fn();
-    const item = createObservableArray(['a', 'b', 'c']);
+    const spy = jest.fn()
+    const item = createObservableArray(['a', 'b', 'c'])
     observer(() => {
-      spy(item[1]);
-    });
-    expect(spy).toBeCalledTimes(1);
+      spy(item[1])
+    })
+    expect(spy).toBeCalledTimes(1)
     expect(spy).toBeCalledWith('b')
-    runInAction(() => item[1] = 'b2')
+    runInAction(() => (item[1] = 'b2'))
     expect(spy).toBeCalledTimes(2)
     expect(spy).toHaveBeenLastCalledWith('b2')
   })

@@ -1,16 +1,16 @@
-import { reportObserved } from "./global_state";
+import { reportObserved } from './global_state'
 
-type ListenerFn = () => void;
+type ListenerFn = () => void
 
 export class ObservableAtom {
-  protected readonly listeners = new Set<ListenerFn>();
+  protected readonly listeners = new Set<ListenerFn>()
 
   attachListener(fn: ListenerFn) {
     this.listeners.add(fn)
   }
 
   removeListener(fn: ListenerFn) {
-    this.listeners.delete(fn);
+    this.listeners.delete(fn)
   }
 
   protected reportObserved() {
@@ -18,8 +18,8 @@ export class ObservableAtom {
   }
 
   protected emitChanged() {
-    for (let listener of this.listeners.values()) {
-      listener();
+    for (const listener of this.listeners.values()) {
+      listener()
     }
   }
 }

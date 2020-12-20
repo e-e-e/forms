@@ -1,50 +1,48 @@
-import {globalState, popExecutionContext, pushExecutionContext} from "./global_state";
-import {ObservableAtom} from "./observable_atom";
+import { globalState, popExecutionContext, pushExecutionContext } from './global_state'
+import { ObservableAtom } from './observable_atom'
 
 export class Reaction {
-  private pending = false;
+  private pending = false
   private observables: ObservableAtom[] = []
 
-  constructor(private readonly fn: () => void) {
-  }
+  constructor(private readonly fn: () => void) {}
 
   private schedule = () => {
     if (!this.pending) {
-      globalState.pendingReactions.push(this);
+      globalState.pendingReactions.push(this)
     }
-    this.pending = true;
+    this.pending = true
   }
 
   runReaction = () => {
-    pushExecutionContext();
-    this.fn();
+    pushExecutionContext()
+    this.fn()
     this.pending = false
-    const context = popExecutionContext();
-    const observed = context?.observables ?? [];
+    const context = popExecutionContext()
+    const observed = context?.observables ?? []
     this.observables.forEach((o) => o.removeListener(this.schedule))
-    observed.forEach(o => o.attachListener(this.schedule))
-    this.observables = observed;
+    observed.forEach((o) => o.attachListener(this.schedule))
+    this.observables = observed
   }
 }
 
 export function observer(fn: () => void) {
-  const reaction = new Reaction(fn);
+  const reaction = new Reaction(fn)
   reaction.runReaction()
 }
 
 export class Watcher<T extends (...args: any) => any> {
-  private pending = false;
+  private pending = false
   private observables: ObservableAtom[] = []
   private handlers = new Set<() => void>()
 
-  constructor(private readonly fn: T) {
-  }
+  constructor(private readonly fn: T) {}
 
   private schedule = () => {
     if (!this.pending) {
-      globalState.pendingReactions.push(this);
+      globalState.pendingReactions.push(this)
     }
-    this.pending = true;
+    this.pending = true
   }
 
   addListener(action: () => void) {
@@ -53,20 +51,19 @@ export class Watcher<T extends (...args: any) => any> {
 
   getAction(): T {
     return ((...args: Parameters<T>): ReturnType<T> => {
-      pushExecutionContext();
+      pushExecutionContext()
       try {
         const v = this.fn(...args)
-        const context = popExecutionContext();
-        const observed = context?.observables ?? [];
+        const context = popExecutionContext()
+        const observed = context?.observables ?? []
         // this.observables.forEach((o) => o.removeListener(this.schedule))
-        observed.forEach(o => o.attachListener(this.schedule))
+        observed.forEach((o) => o.attachListener(this.schedule))
         // this.observables = observed;
-        return v;
+        return v
       } catch (e) {
         console.error(e)
-        throw e;
+        throw e
       }
-
     }) as T
   }
 
@@ -75,7 +72,6 @@ export class Watcher<T extends (...args: any) => any> {
     this.pending = false
   }
 }
-
 
 export function watch<T extends (...args: any) => any>(fn: T, reaction: () => void): T {
   console.log('created a watcher')
