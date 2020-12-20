@@ -1,28 +1,32 @@
-import {globalState, runReactions} from "./global_state";
-
+import { globalState, runReactions } from './global_state'
 
 function startBatch() {
   globalState.batchCounter++
 }
 
 function endBatch() {
-  globalState.batchCounter--;
+  globalState.batchCounter--
   if (globalState.batchCounter === 0) {
-    runReactions();
+    runReactions()
   }
 }
 
-export function action(fn: () => void) {
-  return () => runInAction(fn)
+export function action<T extends (...args: any) => any>(fn: T): T {
+  return ((...args) => {
+    startBatch()
+    let error: any
+    try {
+      return fn(...args)
+    } catch (e) {
+      error = e
+      console.error(e)
+    } finally {
+      endBatch()
+    }
+    throw error
+  }) as T
 }
 
 export function runInAction(fn: () => void) {
-    startBatch();
-    try {
-      fn()
-    } catch (e) {
-      console.error(e)
-    } finally {
-      endBatch();
-    }
+  action(fn)()
 }

@@ -1,34 +1,28 @@
-import {ObservableGetter, ObservableValue} from "./observable_value";
-import { isPlainObject, isPropertyKey, stringifyKey} from "./utils";
-import {ComputedValue} from "./computed";
-import {MANAGER, nextId} from "./global_state";
+import { ObservableGetter, ObservableValue } from './observable_value'
+import { isPlainObject, isPropertyKey, stringifyKey } from './utils'
+import { ComputedValue } from './computed'
+import { MANAGER, nextId } from './global_state'
 
 class ObjectManager {
-  readonly type = 'object' as const;
-  readonly values: Map<PropertyKey, ObservableValue<any> | ComputedValue<any>> = new Map();
+  readonly type = 'object' as const
+  readonly values: Map<PropertyKey, ObservableValue<any> | ComputedValue<any>> = new Map()
 
-  constructor(
-    public target: any,
-    public name: string
-  ) {
-  }
+  constructor(public target: any, public name: string) {}
 
   get(name: PropertyKey) {
     return this.values.get(name)?.get()
   }
 
   set(name: PropertyKey, value: any) {
-    const o = this.values.get(name);
-    (o as any).set(value);
+    const o = this.values.get(name)
+    ;(o as any).set(value)
   }
 
   has(name: PropertyKey) {
     // create an observable value for the key.
   }
 
-  remove(name: PropertyKey) {
-
-  }
+  remove(name: PropertyKey) {}
 
   addExistingObservableProp(key: PropertyKey, value: ObservableValue<any> | ComputedValue<any>) {
     const instance = this.target
@@ -41,7 +35,7 @@ class ObjectManager {
       },
       set(v) {
         this[MANAGER].set(key, v)
-      }
+      },
     })
   }
 
@@ -57,7 +51,7 @@ class ObjectManager {
       },
       set(v) {
         this[MANAGER].set(key, v)
-      }
+      },
     })
   }
 }
@@ -72,14 +66,13 @@ function getManager(target: ObservableObject<unknown>): ObjectManager {
 
 const proxyHandler: ProxyHandler<ObservableObject<any>> = {
   has(target: ObservableObject<any>, name: PropertyKey) {
-    if (name === MANAGER || name === "constructor")
-      return true
+    if (name === MANAGER || name === 'constructor') return true
     // const manager = getManager(target)
     // if (isPropertyKey(name)) return manager.has(name)
     return (name as any) in target
   },
   get(target: ObservableObject<any>, name: PropertyKey): any {
-    if (name === MANAGER || name === "constructor") {
+    if (name === MANAGER || name === 'constructor') {
       return target[name]
     }
     const manager = getManager(target)
@@ -108,23 +101,23 @@ const proxyHandler: ProxyHandler<ObservableObject<any>> = {
   },
   preventExtensions() {
     return false
-  }
+  },
 }
 
-function createObjectAdmin(target: any, name: PropertyKey = ""): ObjectManager {
-  if (target[MANAGER]) return target[MANAGER];
+function createObjectAdmin(target: any, name: PropertyKey = ''): ObjectManager {
+  if (target[MANAGER]) return target[MANAGER]
   if (!name) {
     if (isPlainObject(target)) {
       name = `ObservableObject@${nextId()}`
     } else {
-      name = `${(target.constructor.name || "ObservableObject")}@${nextId()}`
+      name = `${target.constructor.name || 'ObservableObject'}@${nextId()}`
     }
   }
-  return new ObjectManager(target, stringifyKey(name));
+  return new ObjectManager(target, stringifyKey(name))
 }
 
 function asAnObservableObject<T extends object>(target: T): ObservableObject<T> {
-  const adm = createObjectAdmin(target);
+  const adm = createObjectAdmin(target)
   Object.defineProperty(target, MANAGER, {
     enumerable: false,
     writable: true,
@@ -138,39 +131,36 @@ function isManaged<T extends any>(v: T): v is ObservableObject<T> {
   return !!(v as any)[MANAGER]
 }
 
-
 function set(target: object, key: PropertyKey, value: any) {
   // console.log(target, key, value)
   if (!isManaged(target)) {
-    return false;
+    return false
   }
-  const manager = getManager(target);
-  const existing = manager.values.get(key);
+  const manager = getManager(target)
+  const existing = manager.values.get(key)
   if (existing) {
     manager.set(key, value)
   } else {
     if (value instanceof ObservableValue) {
-      target[MANAGER].addExistingObservableProp(key, value);
+      target[MANAGER].addExistingObservableProp(key, value)
     } else if (value instanceof ComputedValue) {
-      target[MANAGER].addExistingObservableProp(key, value);
+      target[MANAGER].addExistingObservableProp(key, value)
     } else {
       target[MANAGER].addObservableProp(key, value)
     }
   }
 }
 
-
-type AsAccessor<T> = T extends ObservableGetter<any> ? ReturnType<T['get']> : T;
+type AsAccessor<T> = T extends ObservableGetter<any> ? ReturnType<T['get']> : T
 
 // TODO: figure out making computed values set only.
 type WithPropsAsAccessors<T extends object> = { [K in keyof T]: AsAccessor<T[K]> }
 
 export function observable<T extends object>(target: T): WithPropsAsAccessors<T> {
-  const object = asAnObservableObject(target);
-  const keys = Object.keys(object);
+  const object = asAnObservableObject(target)
+  const keys = Object.keys(object)
   for (const key of keys) {
     set(object, key, (object as Record<PropertyKey, any>)[key])
   }
   return new Proxy<ObservableObject<T>>(object, proxyHandler) as WithPropsAsAccessors<T>
 }
-

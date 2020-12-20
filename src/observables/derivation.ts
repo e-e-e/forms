@@ -1,4 +1,4 @@
-import {ObservableAtom} from "./observable_atom";
+import { ObservableAtom } from './observable_atom'
 
 export type DerivationState = {
   observables: ObservableAtom[]
