@@ -53,7 +53,7 @@ export class Watcher<T extends (...args: any) => any> {
     return ((...args: Parameters<T>): ReturnType<T> => {
       pushExecutionContext()
       try {
-        const v = this.fn(...args)
+        const v = this.fn(...(args as any))
         const context = popExecutionContext()
         const observed = context?.observables ?? []
         // this.observables.forEach((o) => o.removeListener(this.schedule))

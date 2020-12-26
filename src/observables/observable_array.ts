@@ -12,6 +12,9 @@ class ObservableArrayManager<T> extends ObservableAtom {
     this.reportObserved()
     return this.values[idx]
   }
+  observed() {
+    this.reportObserved()
+  }
   set(idx: number, value: T) {
     this.values[idx] = value
     this.emitChanged()
@@ -22,13 +25,14 @@ class ObservableArrayManager<T> extends ObservableAtom {
   }
 
   setArrayLength(length: number) {
-    this.values.splice(0, length)
+    this.values.length = length
   }
 }
 
 const proxyHandler = {
   get(target: ObservableArray<any>, name: PropertyKey) {
     const manager = target[MANAGER]
+    // console.log(name, manager.values)
     if (name === MANAGER) return manager
     if (name === 'length') return manager.getArrayLength()
     if (typeof name === 'number') {
@@ -37,6 +41,11 @@ const proxyHandler = {
     if (typeof name === 'string' && !isNaN(name as any)) {
       return manager.get(parseInt(name))
     }
+    if (name === 'map') {
+      console.log(manager.values)
+      manager.observed()
+    }
+    // Reflect.get(target, name) //
     return (target as any)[name]
   },
   set(target: ObservableArray<any>, name: PropertyKey, value: any): boolean {
@@ -71,8 +80,5 @@ export function createObservableArray<T>(initialValues: T[] | undefined): Observ
     configurable: true,
     value: adm,
   })
-  const proxy = new Proxy(adm.values, proxyHandler) as any
-  if (initialValues && initialValues.length) {
-  }
-  return proxy
+  return new Proxy(adm.values, proxyHandler) as any
 }

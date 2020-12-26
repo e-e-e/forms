@@ -39,10 +39,29 @@ const formSchema: FormSchema = {
   type: 'group',
   key: 'test',
   name: 'test',
+  validation: [
+    { expression: 'name IN [pass "ok" "another"]', message: 'Name must be' },
+    { expression: 'LEN pass NOT 0', message: 'Pass needs to be bigger' },
+  ],
   fields: [
     { type: 'text', key: 'name', name: 'Name' },
-    { type: 'number', key: 'age', name: 'Age' },
+    { type: 'text', key: 'pass', name: 'Pass' },
+    {
+      type: 'group',
+      key: 'nested',
+      name: 'nested',
+      validation: [],
+      fields: [{ type: 'number', key: 'number', name: 'Number' }],
+    },
+    // { type: 'number', key: 'age', name: 'Age' },
+    // {
+    //   type: 'repeatable',
+    //   name: 'rr',
+    //   key: 'rr',
+    //   field: { type: 'text', key: 'likes', name: 'Likes' },
+    // },
   ],
+  // validations: [{ func: '=', args: ['#test.name'] }],
   // types of validation
   // age is over 18
   // all values are less then < x

@@ -157,4 +157,16 @@ describe('Observable Array', () => {
     expect(spy).toBeCalledTimes(2)
     expect(spy).toHaveBeenLastCalledWith('b2')
   })
+
+  it('reruns when mapping over items and new value is added', () => {
+    const spy = jest.fn()
+    const item = createObservableArray(['a', 'b', 'c'])
+    observer(() => {
+      item.map((i) => i)
+      spy()
+    })
+    expect(spy).toBeCalledTimes(1)
+    runInAction(() => item.push('b2'))
+    expect(spy).toBeCalledTimes(2)
+  })
 })
