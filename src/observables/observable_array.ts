@@ -25,6 +25,7 @@ class ObservableArrayManager<T> extends ObservableAtom {
   }
 
   setArrayLength(length: number) {
+    this.emitChanged()
     this.values.length = length
   }
 }
@@ -40,10 +41,6 @@ const proxyHandler = {
     }
     if (typeof name === 'string' && !isNaN(name as any)) {
       return manager.get(parseInt(name))
-    }
-    if (name === 'map') {
-      console.log(manager.values)
-      manager.observed()
     }
     // Reflect.get(target, name) //
     return (target as any)[name]

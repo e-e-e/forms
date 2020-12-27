@@ -270,9 +270,13 @@ function parseArgument(tokens: Token[]): ASTNode {
   throw new Error('Unexpected token')
 }
 
+export function createExpression(expression: string) {
+  const ast = parse(expression)
+  return processAstNode(ast)
+}
+
 export function createValidatorFromExpression(expression: string, message: string) {
   const ast = parse(expression)
-  console.log(ast)
   const fn = processAstNode(ast)
   return (state: InputStateGroup['fields']) => (fn(state) ? undefined : message)
 }

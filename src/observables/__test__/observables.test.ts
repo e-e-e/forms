@@ -169,4 +169,18 @@ describe('Observable Array', () => {
     runInAction(() => item.push('b2'))
     expect(spy).toBeCalledTimes(2)
   })
+
+  it('reruns when element is removed', () => {
+    const spy = jest.fn()
+    const item = createObservableArray(['a', 'b', 'c'])
+    observer(() => {
+      item.map((i) => i)
+      spy()
+    })
+    expect(spy).toBeCalledTimes(1)
+    runInAction(() => {
+      item.splice(2, 1)
+    })
+    expect(spy).toBeCalledTimes(2)
+  })
 })

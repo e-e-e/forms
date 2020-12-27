@@ -46,20 +46,26 @@ const formSchema: FormSchema = {
   fields: [
     { type: 'text', key: 'name', name: 'Name' },
     { type: 'text', key: 'pass', name: 'Pass' },
+    { type: 'number', key: 'age', name: 'Age' },
     {
-      type: 'group',
-      key: 'nested',
-      name: 'nested',
-      validation: [],
-      fields: [{ type: 'number', key: 'number', name: 'Number' }],
+      type: 'repeatable',
+      name: 'rr',
+      key: 'rr',
+      field: { type: 'text', key: 'likes', name: 'Likes' },
     },
-    // { type: 'number', key: 'age', name: 'Age' },
-    // {
-    //   type: 'repeatable',
-    //   name: 'rr',
-    //   key: 'rr',
-    //   field: { type: 'text', key: 'likes', name: 'Likes' },
-    // },
+    {
+      type: 'conditional',
+      key: 'cub',
+      name: 'con',
+      conditions: [{ expression: 'LEN name IS 2' }],
+      field: {
+        type: 'group',
+        key: 'nested',
+        name: 'nested',
+        validation: [],
+        fields: [{ type: 'number', key: 'number', name: 'Number' }],
+      },
+    },
   ],
   // validations: [{ func: '=', args: ['#test.name'] }],
   // types of validation

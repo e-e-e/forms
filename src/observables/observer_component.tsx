@@ -8,6 +8,7 @@ function useForceUpdate() {
   }, [])
 }
 
+// TODO: handle unwatching when unmounted.
 export function observer<T extends {}>(
   Component: React.FunctionComponent<T>,
 ): React.FunctionComponent<T> {

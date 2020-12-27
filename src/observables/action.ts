@@ -14,6 +14,7 @@ function endBatch() {
 export function action<T extends (...args: any) => any>(fn: T): T {
   return ((...args) => {
     startBatch()
+    console.log('start action')
     let error: any
     try {
       return fn(...args)
@@ -21,6 +22,7 @@ export function action<T extends (...args: any) => any>(fn: T): T {
       error = e
       console.error(e)
     } finally {
+      console.log('end action')
       endBatch()
     }
     throw error

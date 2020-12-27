@@ -45,6 +45,7 @@ export const globalState: GlobalState = {
 const MAX_ITERATIONS = 100
 export function runReactions() {
   const reactions = globalState.pendingReactions
+  console.log('pending', globalState.pendingReactions)
   let iterations = 0
   while (reactions.length > 0) {
     iterations++

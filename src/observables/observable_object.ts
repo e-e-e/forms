@@ -164,3 +164,21 @@ export function observable<T extends object>(target: T): WithPropsAsAccessors<T>
   }
   return new Proxy<ObservableObject<T>>(object, proxyHandler) as WithPropsAsAccessors<T>
 }
+
+export function merge<T extends object, S extends object>(
+  target: T,
+  source: S,
+): WithPropsAsAccessors<T & S> {
+  // TODO: make this more robust, what if target is not observable yet?
+  const manager = getManager(target as ObservableObject<T>)
+  for (const [key, value] of Object.entries(source)) {
+    if (value instanceof ObservableValue) {
+      manager.addExistingObservableProp(key, value)
+    } else if (value instanceof ComputedValue) {
+      manager.addExistingObservableProp(key, value)
+    } else {
+      manager.addObservableProp(key, value)
+    }
+  }
+  return target as WithPropsAsAccessors<T & S>
+}

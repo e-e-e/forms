@@ -1,5 +1,6 @@
 import React, { DependencyList, useMemo } from 'react'
 import {
+  ConditionalInputState,
   createStateFromSchema,
   FormSchema,
   InputState,
@@ -16,7 +17,7 @@ function useAction<T extends (...args: any[]) => any>(callback: T, deps: Depende
 }
 
 const Errors = observer(({ input }: { input: InputStateGroup }) => {
-  return <>errors: {input.errors}</>
+  return <>errors: {input.errors.join(',')}</>
 })
 
 const InputGroup = ({ input }: { input: InputStateGroup }) => {
@@ -67,16 +68,26 @@ const RepeatableInput = observer(({ input }: { input: RepeatableInputState }) =>
     <div>
       <hr />
       {input.fields.map((field, index) => {
-        console.log('ok')
-        return <FormElement key={`${field.key}:${index}`} input={field} />
+        return (
+          <div>
+            <FormElement key={`${field.key}:${index}`} input={field} />
+            <button onClick={() => input.remove(index)}>X</button>
+          </div>
+        )
       })}
       <button onClick={input.add}>add</button>
     </div>
   )
 })
 
+const ConditionalInput = observer(({ input }: { input: ConditionalInputState }) => {
+  return <div>{input.field && <FormElement input={input.field} />}</div>
+})
+
 const FormElement = ({ input }: { input: InputState }) => {
   switch (input.type) {
+    case 'conditional':
+      return <ConditionalInput input={input} />
     case 'group':
       return <InputGroup input={input} />
     case 'repeatable':
