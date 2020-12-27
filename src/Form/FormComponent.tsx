@@ -69,16 +69,37 @@ const RepeatableInput = observer(({ input }: { input: RepeatableInputState }) =>
       <hr />
       {input.fields.map((field, index) => {
         return (
-          <div>
-            <FormElement key={`${field.key}:${index}`} input={field} />
-            <button onClick={() => input.remove(index)}>X</button>
-          </div>
+          <RepeatableInputElement
+            key={`${field.key}:${index}`}
+            field={field}
+            remove={input.remove}
+            index={index}
+          />
         )
       })}
       <button onClick={input.add}>add</button>
     </div>
   )
 })
+
+const RepeatableInputElement = React.memo(
+  ({
+    field,
+    remove,
+    index,
+  }: {
+    field: InputState
+    remove: (id: number) => void
+    index: number
+  }) => {
+    return (
+      <div>
+        <FormElement input={field} />
+        <button onClick={() => remove(index)}>X</button>
+      </div>
+    )
+  },
+)
 
 const ConditionalInput = observer(({ input }: { input: ConditionalInputState }) => {
   return <div>{input.field && <FormElement input={input.field} />}</div>
@@ -102,9 +123,5 @@ const FormElement = ({ input }: { input: InputState }) => {
 export const Form = ({ schema }: { schema: FormSchema }) => {
   const state = useMemo(() => createStateFromSchema(schema), [schema])
 
-  return (
-    // <form>
-    <FormElement input={state} />
-    // </form>
-  )
+  return <FormElement input={state} />
 }
