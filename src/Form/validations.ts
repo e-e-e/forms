@@ -1,4 +1,4 @@
-import { InputState, InputStateGroup } from './form'
+import { InputState, InputStateGroup } from './field_types'
 
 type RawValue = string | number | boolean
 

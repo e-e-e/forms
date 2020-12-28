@@ -4,52 +4,21 @@ import { computed } from '../observables/computed'
 import { createObservableArray } from '../observables/observable_array'
 import { action } from '../observables/action'
 import { createExpression, createValidatorFromExpression } from './validations'
-
-export type FormSchema = FieldGroup
-
-type CommonField = { key: string; name: string }
-type TextField = CommonField & { type: 'text' }
-type NumberField = CommonField & { type: 'number' }
-
-type Condition = { expression: string }
-
-type Validation = {
-  expression: string
-  message: string
-}
-
-type ConditionalField = CommonField & { type: 'conditional'; conditions: Condition[]; field: Field }
-type RepeatableField = CommonField & { type: 'repeatable'; field: Field }
-type FieldGroup = CommonField & {
-  type: 'group'
-  fields: Field[]
-  validation: Validation[]
-}
-export type Field = TextField | NumberField | FieldGroup | RepeatableField | ConditionalField
-
-type InputStateCommon = {
-  dirty: boolean
-  value: string | number
-  errors: string[]
-}
-export type TextInputState = InputStateCommon & TextField & { value: string }
-export type NumberInputState = InputStateCommon & NumberField & { value: number }
-export type InputState =
-  | InputStateGroup
-  | TextInputState
-  | NumberInputState
-  | RepeatableInputState
-  | ConditionalInputState
-export type InputStateGroup = Omit<FieldGroup, 'fields'> & {
-  fields: { [keyof: string]: InputState }
-  errors: string[]
-}
-export type RepeatableInputState = RepeatableField & {
-  fields: InputState[]
-  add: () => void
-  remove: (index: number) => void
-}
-export type ConditionalInputState = Omit<ConditionalField, 'field'> & { field?: InputState }
+import {
+  ConditionalField,
+  ConditionalInputState,
+  Field,
+  FieldGroup,
+  FormSchema,
+  InputState,
+  InputStateGroup,
+  NumberField,
+  NumberInputState,
+  RepeatableField,
+  RepeatableInputState,
+  TextField,
+  TextInputState,
+} from './field_types'
 
 function fieldToInputState(field: Field, parent: ParentState): InputState {
   switch (field.type) {
@@ -154,3 +123,5 @@ const createGroupInputState = (group: FieldGroup, parent?: ParentState): InputSt
 export function createStateFromSchema(schema: FormSchema): InputStateGroup {
   return createGroupInputState(schema)
 }
+
+export function toValue(state: InputStateGroup) {}

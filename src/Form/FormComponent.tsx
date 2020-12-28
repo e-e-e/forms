@@ -1,16 +1,16 @@
 import React, { DependencyList, useMemo } from 'react'
+import { createStateFromSchema } from './form'
+import { observer } from '../observables/observer_component'
+import { action } from '../observables/action'
 import {
   ConditionalInputState,
-  createStateFromSchema,
   FormSchema,
   InputState,
   InputStateGroup,
   NumberInputState,
   RepeatableInputState,
   TextInputState,
-} from './form'
-import { observer } from '../observables/observer_component'
-import { action } from '../observables/action'
+} from './field_types'
 
 function useAction<T extends (...args: any[]) => any>(callback: T, deps: DependencyList): T {
   return React.useCallback(action(callback), deps)

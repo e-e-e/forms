@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { Form } from './Form/FormComponent'
-import { FormSchema } from './Form/form'
+import { FormSchema } from './Form/field_types'
 
 const formSchema: FormSchema = {
   type: 'group',
@@ -36,6 +36,41 @@ const formSchema: FormSchema = {
     },
   ],
 }
+
+interface CF {
+  name: string
+  value: never
+}
+interface TF extends CF {
+  type: 'text'
+}
+interface NF extends CF {
+  type: 'number'
+}
+
+type Field = TF | NF
+
+type FTS = TF & { value: string }
+
+interface TF {
+  required: boolean
+}
+
+function CustomInput({ input }: { input: FTS }) {
+  return (
+    <div>
+      <input type={'text'} value={input.value} required={input.required} />
+    </div>
+  )
+}
+
+function MasterInput(field: Field) {
+  if (field.type === 'text') {
+    field.required = true
+  } else {
+  }
+}
+
 function App() {
   return (
     <div className="App">
