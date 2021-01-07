@@ -49,6 +49,10 @@ export class Watcher<T extends (...args: any) => any> {
     this.handlers.add(action)
   }
 
+  removeListener(action: () => void) {
+    this.handlers.delete(action)
+  }
+
   getAction(): T {
     return ((...args: Parameters<T>): ReturnType<T> => {
       pushExecutionContext()
@@ -78,4 +82,17 @@ export function watch<T extends (...args: any) => any>(fn: T, reaction: () => vo
   const watcher = new Watcher(fn)
   watcher.addListener(reaction)
   return watcher.getAction()
+}
+
+export function watcher<T extends (...args: any) => any>(
+  fn: T,
+  reaction: () => void,
+): { Component: T; unsubscribe: () => void } {
+  console.log('created a watcher')
+  const watcher = new Watcher(fn)
+  watcher.addListener(reaction)
+  return {
+    Component: watcher.getAction(),
+    unsubscribe: () => watcher.removeListener(reaction),
+  }
 }

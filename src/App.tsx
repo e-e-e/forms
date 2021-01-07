@@ -27,14 +27,8 @@ const formSchema: FormSchema = {
       name: 'con',
       conditions: [
         {
-          when: 'LEN name IS 2',
-          field: {
-            type: 'group',
-            key: 'nested',
-            name: 'nested',
-            validation: [],
-            fields: [{ type: 'number', key: 'number', name: 'Number' }],
-          },
+          when: 'LEN name IS 0',
+          field: { type: 'number', key: 'number', name: 'Number' },
         },
       ],
     },

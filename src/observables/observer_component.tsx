@@ -1,5 +1,5 @@
 import React from 'react'
-import { watch } from './observer'
+import { watch, watcher } from './observer'
 
 function useForceUpdate() {
   const [, setTick] = React.useState(0)
@@ -10,12 +10,21 @@ function useForceUpdate() {
 
 // TODO: handle unwatching when unmounted.
 export function observer<T extends {}>(
-  Component: React.FunctionComponent<T>,
+  Comp: React.FunctionComponent<T>,
 ): React.FunctionComponent<T> {
   return React.memo<T>((props: T) => {
     const update = useForceUpdate()
-    const ObservableComponent = React.useMemo(() => watch(Component, update), [update])
-    return <ObservableComponent {...props} />
+    // const ref = useRef<React.FunctionComponent<T> | null>(null)
+    const subscription = React.useMemo(() => watcher(Comp, update), [update])
+    React.useEffect(() => {
+      return () => {
+        console.log('unsubscribe')
+        subscription.unsubscribe()
+      }
+    }, [subscription])
+    // const ObservableComponent = React.useMemo(() => watch(Component, update), [update])
+    const Component = subscription.Component
+    return <Component {...props} />
   })
 }
 
