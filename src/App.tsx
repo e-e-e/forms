@@ -25,14 +25,45 @@ const formSchema: FormSchema = {
       type: 'conditional',
       key: 'cub',
       name: 'con',
-      conditions: [{ expression: 'LEN name IS 2' }],
-      field: {
-        type: 'group',
-        key: 'nested',
-        name: 'nested',
-        validation: [],
-        fields: [{ type: 'number', key: 'number', name: 'Number' }],
-      },
+      conditions: [
+        {
+          when: 'LEN name IS 2',
+          field: {
+            type: 'group',
+            key: 'nested',
+            name: 'nested',
+            validation: [],
+            fields: [{ type: 'number', key: 'number', name: 'Number' }],
+          },
+        },
+      ],
+    },
+  ],
+}
+
+const x = {
+  fields: [
+    {
+      type: 'select',
+      key: 'option',
+      options: [
+        { value: 'one', name: 'One' },
+        { value: 'two', name: 'Two' },
+        { value: 'three', name: 'Three' },
+      ],
+    },
+    {
+      type: 'conditional',
+      conditions: [
+        {
+          when: "option IS 'two'",
+          fields: [],
+        },
+        {
+          when: "option IS 'three'",
+          fields: [],
+        },
+      ],
     },
   ],
 }

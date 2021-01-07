@@ -81,16 +81,22 @@ const createConditionalInputState = (
 ): ConditionalInputState => {
   // root state
   // create a condition...
-  const conditions = field.conditions.map((c) => createExpression(c.expression))
-  const state = fieldToInputState(field.field, parent)
+  const conditions = field.conditions.map((c) => createExpression(c.when))
+  // const state = fieldToInputState(field.field, parent)
+  let lastIndex = -1
+  let existingState: InputState | null = null
   const optionalField = computed(() => {
-    if (conditions.every((exp) => parent.fields && exp(parent.fields))) {
-      return state
+    if (!parent.fields) return null
+    for (let i = 0; i < conditions.length; i++) {
+      if (conditions[i](parent.fields)) {
+        if (lastIndex !== i) {
+          existingState = fieldToInputState(field.conditions[i].field, parent)
+        }
+        lastIndex = i
+        return existingState
+      }
     }
-    return undefined
-  })
-  observable(() => {
-    Object.keys(parent.fields || {})
+    return null
   })
   return observable({
     ...field,

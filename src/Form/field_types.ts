@@ -12,7 +12,7 @@ export interface NumberField extends CommonField {
   type: 'number'
 }
 
-export type Condition = { expression: string }
+export type Condition = { when: string; field: Field }
 
 export type Validation = {
   expression: string
@@ -22,7 +22,6 @@ export type Validation = {
 export interface ConditionalField extends CommonField {
   type: 'conditional'
   conditions: Condition[]
-  field: Field
 }
 
 export interface RepeatableField extends CommonField {
@@ -54,7 +53,7 @@ export type RepeatableInputState = RepeatableField & {
   add: () => void
   remove: (index: number) => void
 }
-export type ConditionalInputState = Omit<ConditionalField, 'field'> & { field?: InputState }
+export type ConditionalInputState = ConditionalField & { field: InputState | null }
 export type InputState =
   | InputStateGroup
   | TextInputState
