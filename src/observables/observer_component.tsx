@@ -14,15 +14,12 @@ export function observer<T extends {}>(
 ): React.FunctionComponent<T> {
   return React.memo<T>((props: T) => {
     const update = useForceUpdate()
-    // const ref = useRef<React.FunctionComponent<T> | null>(null)
     const subscription = React.useMemo(() => watcher(Comp, update), [update])
     React.useEffect(() => {
       return () => {
-        console.log('unsubscribe')
         subscription.unsubscribe()
       }
     }, [subscription])
-    // const ObservableComponent = React.useMemo(() => watch(Component, update), [update])
     const Component = subscription.Component
     return <Component {...props} />
   })

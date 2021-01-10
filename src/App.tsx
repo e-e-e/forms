@@ -8,8 +8,8 @@ const formSchema: FormSchema = {
   key: 'test',
   name: 'test',
   validation: [
-    { expression: 'name IN [pass "ok" "another"]', message: 'Name must be' },
-    { expression: 'LEN pass NOT 0', message: 'Pass needs to be bigger' },
+    //   { expression: 'name IN [pass "ok" "another"]', message: 'Name must be' },
+    //   { expression: 'LEN pass NOT 0', message: 'Pass needs to be bigger' },
   ],
   fields: [
     { type: 'text', key: 'name', name: 'Name' },

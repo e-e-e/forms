@@ -7,17 +7,34 @@ export interface CommonField {
 
 export interface TextField extends CommonField {
   type: 'text'
+  // required: boolean
+  // default?: string
 }
+
 export interface NumberField extends CommonField {
   type: 'number'
+  // required: boolean
+  // default?: number
+}
+
+type SelectOptionValue = {
+  name: string
+  value: string
+}
+
+type SelectOptionGroup = {
+  name: string
+  Options: SelectOption[]
+}
+
+type SelectOption = SelectOptionGroup | SelectOptionValue
+
+export interface SelectField extends CommonField {
+  type: 'select'
+  options: SelectOption[]
 }
 
 export type Condition = { when: string; field: Field }
-
-export type Validation = {
-  expression: string
-  message: string
-}
 
 export interface ConditionalField extends CommonField {
   type: 'conditional'
@@ -29,13 +46,24 @@ export interface RepeatableField extends CommonField {
   field: Field
 }
 
+export type Validation = {
+  expression: string
+  message: string
+}
+
 export interface FieldGroup extends CommonField {
   type: 'group'
   fields: Field[]
   validation: Validation[]
 }
 
-export type Field = TextField | NumberField | FieldGroup | RepeatableField | ConditionalField
+export type Field =
+  | TextField
+  | NumberField
+  | SelectField
+  | FieldGroup
+  | RepeatableField
+  | ConditionalField
 
 export type InputStateCommon = {
   dirty: boolean
@@ -44,6 +72,7 @@ export type InputStateCommon = {
 }
 export type TextInputState = TextField & { value: string } & InputStateCommon
 export type NumberInputState = InputStateCommon & NumberField & { value: number }
+export type SelectInputState = InputStateCommon & SelectField & { value: string }
 export type InputStateGroup = Omit<FieldGroup, 'fields'> & {
   fields: { [keyof: string]: InputState }
   errors: string[]
@@ -58,5 +87,6 @@ export type InputState =
   | InputStateGroup
   | TextInputState
   | NumberInputState
+  | SelectInputState
   | RepeatableInputState
   | ConditionalInputState

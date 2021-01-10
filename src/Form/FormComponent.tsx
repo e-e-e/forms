@@ -9,6 +9,7 @@ import {
   InputStateGroup,
   NumberInputState,
   RepeatableInputState,
+  SelectInputState,
   TextInputState,
 } from './field_types'
 
@@ -62,6 +63,21 @@ const TextInput = observer(({ input }: { input: TextInputState }) => {
   )
 })
 
+const SelectInput = observer(({ input }: { input: SelectInputState }) => {
+  const onChange = React.useCallback(
+    action((e: React.ChangeEvent<HTMLSelectElement>) => {
+      input.value = e.target.value
+    }),
+    [input],
+  )
+  return (
+    <div>
+      <label>{input.name}:</label>
+      <select value={input.value} onChange={onChange}></select>
+    </div>
+  )
+})
+
 const RepeatableInput = observer(({ input }: { input: RepeatableInputState }) => {
   console.log('repeat', input.fields)
   return (
@@ -102,7 +118,7 @@ const RepeatableInputElement = React.memo(
 )
 
 const ConditionalInput = observer(({ input }: { input: ConditionalInputState }) => {
-  return <div>{input.field && <FormElement input={input.field} />}</div>
+  return <>{input.field && <FormElement input={input.field} />}</>
 })
 
 const FormElement = ({ input }: { input: InputState }) => {
@@ -117,6 +133,8 @@ const FormElement = ({ input }: { input: InputState }) => {
       return <NumberInput input={input} />
     case 'text':
       return <TextInput input={input} />
+    case 'select':
+      return <SelectInput input={input} />
   }
 }
 

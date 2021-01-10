@@ -16,6 +16,8 @@ import {
   NumberInputState,
   RepeatableField,
   RepeatableInputState,
+  SelectField,
+  SelectInputState,
   TextField,
   TextInputState,
 } from './field_types'
@@ -32,6 +34,8 @@ function fieldToInputState(field: Field, parent: ParentState): InputState {
       return createNumberInputState(field)
     case 'text':
       return createTextInputState(field)
+    case 'select':
+      return createSelectInputState(field)
   }
 }
 
@@ -58,6 +62,16 @@ const createNumberInputState = (field: NumberField): NumberInputState => {
   })
 }
 
+const createSelectInputState = (field: SelectField): SelectInputState => {
+  const value = new ObservableValue('')
+  return observable({
+    ...field,
+    dirty: false,
+    value,
+    errors: [],
+  })
+}
+
 const createRepeatableInputState = (
   field: RepeatableField,
   parent: ParentState,
@@ -67,11 +81,7 @@ const createRepeatableInputState = (
     ...field,
     fields,
     add: action(() => fields.push(fieldToInputState(field.field, parent))),
-    remove: action((index: number) => {
-      console.log('remove')
-      fields.splice(index, 1)
-      console.log(fields)
-    }),
+    remove: action((index: number) => fields.splice(index, 1)),
   })
 }
 
