@@ -34,15 +34,25 @@ function getValue(state: Fields, keys: string[]): undefined | RawValue {
 }
 
 function isFuncLike(str: string) {
-  return !!str.match(/^[A-Z]+$/)
+  return !!str.match(/^[A-Z><=]+$/)
 }
 function isIdLike(str: string) {
   return !!str.match(/^[a-z_][.a-z0-9_]*$/)
 }
 
-type BinaryFunctionKey = 'AND' | 'OR' | 'NOT' | 'IS' | 'IN'
+type BinaryFunctionKey = 'AND' | 'OR' | 'NOT' | 'IS' | 'IN' | '<' | '<=' | '>' | '>='
 
-const binaryFunctionKeys: BinaryFunctionKey[] = ['AND', 'OR', 'NOT', 'IS', 'IN']
+const binaryFunctionKeys: BinaryFunctionKey[] = [
+  'AND',
+  'OR',
+  'NOT',
+  'IS',
+  'IN',
+  '<',
+  '<=',
+  '>',
+  '>=',
+]
 
 function isBinaryFunctionKey(s: string): s is BinaryFunctionKey {
   return binaryFunctionKeys.includes(s as BinaryFunctionKey)
@@ -236,7 +246,6 @@ function parseSet(tokens: Token[]): SetNode {
   const values: ASTNode[] = []
   while (tokens[0].type !== 'end-set') {
     const value = parseArgument(tokens)
-    console.log('v:.', value)
     values.push(value)
   }
   tokens.shift()
@@ -305,6 +314,34 @@ const processAstNode = (node: ASTNode): Resolver => {
 function makeExpression(func: ExpressionNode): Resolver {
   const [a, b] = func.args.map(processAstNode)
   switch (func.func) {
+    case '<':
+      return (i) => {
+        const v1 = a(i)
+        const v2 = b(i)
+        if (v1 == null || v2 == null) throw new Error('Operator < received undefined argument.')
+        return v1 < v2
+      }
+    case '<=':
+      return (i) => {
+        const v1 = a(i)
+        const v2 = b(i)
+        if (v1 == null || v2 == null) throw new Error('Operator <= received undefined argument.')
+        return v1 <= v2
+      }
+    case '>':
+      return (i) => {
+        const v1 = a(i)
+        const v2 = b(i)
+        if (v1 == null || v2 == null) throw new Error('Operator > received undefined argument.')
+        return v1 > v2
+      }
+    case '>=':
+      return (i) => {
+        const v1 = a(i)
+        const v2 = b(i)
+        if (v1 == null || v2 == null) throw new Error('Operator >= received undefined argument.')
+        return v1 >= v2
+      }
     case 'IS':
       return (i) => a(i) === b(i)
     case 'IN':

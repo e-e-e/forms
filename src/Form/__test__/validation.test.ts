@@ -180,6 +180,10 @@ describe('createValidatorFromExpression', () => {
     '"HELLO" IS "HELLO"',
     'true OR (false AND false)',
     "UNIQUE ['a' 'c' 'd' 'e']",
+    '2 <= 2',
+    '-1 < 2',
+    '2 > 0',
+    '4 >= 4',
   ]
   test.each(trueExpressions)('%s is ok', (expression) => {
     const validator = createValidatorFromExpression(expression, 'Failed')
@@ -193,6 +197,10 @@ describe('createValidatorFromExpression', () => {
     'true AND false',
     '(true OR false) AND false',
     "UNIQUE ['a' 'a' 'c' 'd' 'e']",
+    '2 >= 3',
+    '-1 > 2',
+    '2 <= 0',
+    '4 < 4',
   ]
   test.each(falseExpressions)('%s fails', (expression) => {
     const failureMsg = 'failed'
