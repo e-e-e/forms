@@ -1,5 +1,5 @@
 import { createValidatorFromExpression, parse } from '../validations'
-import { InputStateGroup } from '../field_types'
+import { InputStateGroup } from '../fields/group'
 
 describe('parse', () => {
   test.each([

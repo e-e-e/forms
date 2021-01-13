@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
-import { Form } from './Form/FormComponent'
-import { FormSchema } from './Form/field_types'
+import { FormSchema } from './Form/fields'
+import { Form } from './Form/components/form'
 
 const formSchema: FormSchema = {
   type: 'group',
